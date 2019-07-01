@@ -56,12 +56,13 @@ else:
 class Output(object):
     """Create a wav file"""
 
-    def __init__(self, dir, nameOverride=None):
+    def __init__(self, dir, nameOverride=""):
         """Create an audio file within a directory (typically creating a new name)"""
         self.directory = dir
-        if nameOverride:
+        if nameOverride != "":
             self.filename = nameOverride
-            self.fileHandle = open(self.filename, "wb")
+            self.fileHandle = open(self.filename, "wb+") #to create file
+            self.fileHandle = open(self.filename, "wb") #python wave.py needs file mode "wb", so "wb+" does not work
         else:
             self.fileHandle = tempfile.NamedTemporaryFile(mode="wb",
                                                           prefix="tok", suffix=".wav",

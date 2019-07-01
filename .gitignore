@@ -1,5 +1,15 @@
 *.pyc
 *.wav
+**/*.wav
 .pydevproject
 .project
 src/desktop.ini
+src/venv
+src/.idea
+**/.settings
+**/.pydevproject
+.DS_Store
+**/*.log
+**/*.log.zip
+**/admin
+**/*.pyc

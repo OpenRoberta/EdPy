@@ -16,7 +16,7 @@ which uses some python 2.7 additions but it isn't cleanly python 3.0. All new co
 to use new print functionality and import functionality so should be easy to go to python 3. But some code was taken from
 EdWare (token assembler bits) so it will need more work.
 
-All of the main python programs have a 'help' option -- e.g. python2 EdPy.py --help.
+All of the main python programs have a 'help' option -- e.g. `python2 EdPy.py --help.`
 
 Examples
 --------
@@ -29,6 +29,11 @@ python2 EdPy.py --help
 To compile a program:
 <pre>
 python2 EdPy.py en_lang.json SOURCE.py
+</pre>
+
+To compile a program to a specific target directory:
+<pre>
+python2 EdPy.py en_lang.json SOURCE.py -t TARGET.wav
 </pre>
 
 To just check a program. This doesn't generate a wav file.

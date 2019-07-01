@@ -63,20 +63,20 @@ def main(args):
         hl_parser.reset_devices_and_locations()
         token_assembler.reset_tokens()
 
-        # print(statements)
+        #print(statements)
         dBytes, dString, dType, version = token_assembler.assemble_lines(statements, False)
-        # print("Size:", len(dBytes), len(dString), dType, version)
+        print("Size:", len(dBytes), len(dString), dType, version)
         if (len(dBytes) == 0 or dType == 0 or version == 0):
             rtc = 1
         elif (not args.checkOnly) and (not args.nowav):
             versionNumber = (version[0] << 4) + version[1]
             versionString = chr(versionNumber) + chr(255 - versionNumber)
-            # print(versionNumber, ord(versionString[0]), ord(versionString[1]), download_type)
+            #print(versionNumber, ord(versionString[0]), ord(versionString[1]), download_type)
 
             if (not args.nowav):
                 absSrcPath = os.path.abspath(args.srcPath.name)
                 path = os.path.dirname(absSrcPath)
-                a = audio.Output(path)
+                a = audio.Output(path, parsed.targetFile[0]) #added destName to arguments
 
                 io.Out.DebugRaw("WavPath:", a.GetWavPath())
                 io.Out.SetWavFilename(a.GetWavPath())
@@ -84,7 +84,7 @@ def main(args):
                 full_download_str = versionString + dString
                 full_download_bytes = [versionNumber, 255 - versionNumber]
                 full_download_bytes.extend(dBytes)
-                # print(len(full_download_bytes))
+                #print(len(full_download_bytes))
 
                 LOG.log("WAV size:{:d} ver:{:d} name:{:s}".format(len(full_download_bytes),
                                                                       versionNumber,
@@ -121,6 +121,9 @@ def ProcessCommandArgs(args):
                         help="Path to a language file")
     parser.add_argument("srcPath", metavar="SRC", type=argparse.FileType('r'),
                         help="Path to the source to be compiled")
+
+    parser.add_argument("-t", dest="targetFile", help="Path to the output file", default="", nargs=1)
+
     parser.add_argument("-v", action="version", version="%(prog)s " + version)
 
     parser.add_argument("-c", dest="checkOnly", action="store_true",
@@ -150,11 +153,11 @@ def ProcessCommandArgs(args):
                         help="don't output the wav file")
 
     # TODO: Change defaults back to normal ones for web app
-    parser.add_argument("-o", type=util.LowerStr, default="json",  # default="console",
+    parser.add_argument("-o", type=util.LowerStr, default="console",  # default="console",
                         choices=list(zip(*outputChoices))[0],
                         help="Output location (default:%(default)s)")
     parser.add_argument("-l", type=util.LowerStr,
-                        choices=list(zip(*levelChoices))[0], default="warn",  # default="debug",
+                        choices=list(zip(*levelChoices))[0], default="debug",  # default="debug",
                         help="Output level (default:%(default)s). " +
                         "\nAll output from previous levels and this one will be generated")
 
@@ -162,7 +165,7 @@ def ProcessCommandArgs(args):
                         choices=testChoices, help="Special tests. " +
                         "INSTEAD of doing normal processing, do the special test")
 
-    # print("Args:",  args)
+    print("Args:",  args)
     parsed = parser.parse_args(args)
 
     sinkNumber = [x[1] for x in outputChoices if x[0] == parsed.o][0]
@@ -189,12 +192,16 @@ if __name__ == '__main__':
     parsed = ProcessCommandArgs(sys.argv[1:])
     io.Out.DebugRaw("Command line args", parsed)
 
+
+    if not parsed.targetFile:
+        parsed.targetFile = [""]
+
     if parsed.x:
         if parsed.x == "pass":
             # want to output a wav file and json which has error = False
             absSrcPath = os.path.abspath(parsed.srcPath.name)
             path = os.path.dirname(absSrcPath)
-            a = audio.Output(path)
+            a = audio.Output(path, parsed.targetFile[0])
 
             io.Out.DebugRaw("WavPath:", a.GetWavPath())
             io.Out.SetWavFilename(a.GetWavPath())
